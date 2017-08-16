@@ -1,0 +1,33 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="FavouriteHeader" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:windowTitleSize">65dip</item>
+        <item name="android:windowTitleBackgroundStyle">@style/titleBarBackground</item>
+    </style>
+
+    <style name="titleBarBackground">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:padding">0px</item>
+    </style>
+
+    <style name="Widget.Button.Toggle" parent="android:Widget">
+        <item name="android:background">@drawable/favourite_star_bg</item>
+        <item name="android:disabledAlpha">?android:attr/disabledAlpha</item>
+    </style>
+
+    <style name="favouriteButton" parent="@android:style/Theme.Black">
+        <item name="android:buttonStyleToggle">@style/Widget.Button.Toggle</item>
+        <item name="android:textOn"></item>
+        <item name="android:textOff"></item>
+    </style>
+
+</resources>
