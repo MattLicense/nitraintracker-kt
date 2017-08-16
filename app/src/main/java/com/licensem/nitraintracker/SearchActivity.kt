@@ -48,7 +48,7 @@ class SearchActivity : AppCompatActivity() {
             originSpinner.setSelection(getIndex(originSpinner, origin))
             destinationSpinner.setSelection(getIndex(destinationSpinner, destination))
 
-            searchButton.callOnClick()
+            // TODO: fix race condition between StationSelectorListener clearing results and searchButton.callOnClick() showing favourite results
         }
     }
 
