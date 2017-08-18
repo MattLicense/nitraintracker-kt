@@ -2,6 +2,8 @@ package com.licensem.nitraintracker.model.xml
 
 import org.simpleframework.xml.Attribute
 import org.simpleframework.xml.Root
+import java.text.SimpleDateFormat
+import java.util.Date
 
 @Root(strict = false)
 data class DepartTime(
@@ -10,5 +12,9 @@ data class DepartTime(
 ) {
     fun getFormattedTime() : String {
         return time?.substring(0..1).plus(":").plus(time?.substring(2..3))
+    }
+
+    fun asDate() : Date {
+        return SimpleDateFormat("yyyyMMddHHmmss").parse(timestamp)
     }
 }

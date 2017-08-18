@@ -7,48 +7,45 @@ import com.licensem.nitraintracker.model.FavouriteTrip
 
 object FavouritesDatabase {
 
-    private var database: SQLiteDatabase? = null
+    val Context.database: DbOpenHelper
+        get() = DbOpenHelper.getInstance(applicationContext)
 
-    private fun getDatabase(context: Context) : SQLiteDatabase {
-        if(database == null) {
-            database = context.openOrCreateDatabase("nitraintracker.db", Context.MODE_PRIVATE, null)
-            database!!.execSQL("CREATE TABLE IF NOT EXISTS favourites (origin VARCHAR(128), destination VARCHAR(128))")
-        }
-
-        return database!!
-    }
-
+    @Synchronized
     fun getFavourites(context: Context) : List<FavouriteTrip> {
-        val favouritesCursor = getDatabase(context).rawQuery("SELECT DISTINCT origin, destination FROM favourites", null)
-
         var favourites: MutableList<FavouriteTrip> = mutableListOf()
 
-        while(favouritesCursor.moveToNext()) {
-            favourites.add(FavouriteTrip(origin = favouritesCursor.getString(0), destination = favouritesCursor.getString(1)))
+        context.database.use {
+            var cursor = rawQuery("SELECT DISTINCT origin, destination FROM favourites", null)
+            while(cursor.moveToNext()) {
+                favourites.add(FavouriteTrip(origin = cursor.getString(0), destination = cursor.getString(1)))
+            }
+            cursor.close()
         }
-
-        favouritesCursor.close()
 
         return favourites
     }
 
+    @Synchronized
     fun addFavourite(context: Context, trip: FavouriteTrip) {
         val row = ContentValues()
         row.put("origin", trip.origin)
         row.put("destination", trip.destination)
-        getDatabase(context).insertOrThrow("favourites", null, row)
+        context.database.use { insertOrThrow("favourites", null, row) }
     }
 
+    @Synchronized
     fun removeFavourite(context: Context, trip: FavouriteTrip) {
-        getDatabase(context)
-            .delete("favourites", "origin=? and destination=?", arrayOf(trip.origin, trip.destination))
+        context.database.use { delete("favourites", "origin=? and destination=?", arrayOf(trip.origin, trip.destination)) }
     }
 
+    @Synchronized
     fun exists(context: Context, trip: FavouriteTrip) : Boolean {
-        var favouriteCheck = getDatabase(context)
-            .rawQuery("SELECT DISTINCT origin, destination FROM favourites WHERE origin=? AND destination=?", arrayOf(trip.origin, trip.destination))
-        var exists = favouriteCheck.count > 0
-        favouriteCheck.close()
+        var exists = false
+        context.database.use {
+            var cursor = rawQuery("SELECT DISTINCT origin, destination FROM favourites WHERE origin=? AND destination=?", arrayOf(trip.origin, trip.destination))
+            exists = cursor.count > 0
+            cursor.close()
+        }
 
         return exists
     }

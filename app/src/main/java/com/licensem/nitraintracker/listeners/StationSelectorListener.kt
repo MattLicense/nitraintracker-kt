@@ -1,4 +1,4 @@
-package com.licensem.nitraintracker.view
+package com.licensem.nitraintracker.listeners
 
 import android.view.View
 import android.widget.*
@@ -6,29 +6,28 @@ import com.licensem.nitraintracker.FavouritesDatabase
 import com.licensem.nitraintracker.R
 import com.licensem.nitraintracker.model.FavouriteTrip
 import com.licensem.nitraintracker.model.xml.Service
-import com.licensem.nitraintracker.util.ServiceListAdapter
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.info
 
-class StationSelectorListener: AdapterView.OnItemSelectedListener {
+class StationSelectorListener: AdapterView.OnItemSelectedListener, AnkoLogger {
     override fun onNothingSelected(parent: AdapterView<*>?) {
         return
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         val parentView = parent?.parent as View
-
-        var clearResults = System.getProperty("clearResults") as String
-
-        if(clearResults == "true") {
-            // clear the results when a station is changed
-            var resultsView = parentView.findViewById<ListView>(R.id.result_view)
-            resultsView.adapter = ArrayAdapter<Service>(parentView.context, android.R.layout.list_content, emptyArray())
-        }
+        var resultsView: ListView = parentView.findViewById<ListView>(R.id.result_view)
 
         val originSpinner = parentView?.findViewById<Spinner>(R.id.originSelector)
         val destinationSpinner = parentView?.findViewById<Spinner>(R.id.destinationSelector)
 
         val origin = originSpinner.selectedItem.toString()
         val dest = destinationSpinner.selectedItem.toString()
+
+        if(resultsView.tag != origin + "-" + dest) {
+            info { "Clearing results after a station was changed" }
+            resultsView.adapter = ArrayAdapter<Service>(parentView.context, android.R.layout.list_content, emptyArray())
+        }
 
         var searchButton = parentView?.findViewById<Button>(R.id.search_button)
         if (origin != "" && dest != "" && origin != dest) {

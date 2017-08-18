@@ -1,21 +1,14 @@
 package com.licensem.nitraintracker
 
-import android.content.Context
-import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.widget.ListView
-import com.licensem.nitraintracker.model.FavouriteTrip
-import com.licensem.nitraintracker.util.FavouritesAdapter
+import com.licensem.nitraintracker.views.MainView
+import org.jetbrains.anko.*
 
-
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), AnkoLogger {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
         getFavourites()
     }
 
@@ -25,20 +18,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getFavourites() {
-        var favourites = FavouritesDatabase.getFavourites(this)
-
-        if(favourites.isEmpty()) {
-            var favouritesText = findViewById(R.id.favourites_text)
-            favouritesText.visibility = View.INVISIBLE
-        }
-
-        var favouritesView = findViewById(R.id.favourites_list) as ListView
-        favouritesView.adapter = FavouritesAdapter(this, android.R.layout.list_content, favourites.toTypedArray())
-    }
-
-    fun startSearch(view: View) {
-        var intent: Intent = Intent(this, SearchActivity::class.java)
-        startActivity(intent)
+        var favourites = FavouritesDatabase.getFavourites(applicationContext)
+        info("User has ${favourites.count()} favourite routes")
+        MainView().favourites(favourites).setContentView(this)
     }
 
 }

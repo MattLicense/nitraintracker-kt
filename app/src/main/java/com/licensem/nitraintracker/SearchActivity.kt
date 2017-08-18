@@ -2,63 +2,51 @@ package com.licensem.nitraintracker
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Window
 import android.widget.*
 import com.licensem.nitraintracker.model.json.StationList
 import com.licensem.nitraintracker.tasks.StationListTask
-import com.licensem.nitraintracker.view.FavouriteToggleListener
-import com.licensem.nitraintracker.view.SearchClickListener
-import com.licensem.nitraintracker.view.StationSelectorListener
+import com.licensem.nitraintracker.views.SearchView
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.info
+import org.jetbrains.anko.setContentView
 
-class SearchActivity : AppCompatActivity() {
+class SearchActivity : AppCompatActivity(), AnkoLogger {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.search_view)
-        window.setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.toolbar)
-
-        val origin = intent.getStringExtra("origin")
-        val destination = intent.getStringExtra("destination")
 
         var stationList: StationList = StationListTask().execute().get()!!
         var stationNames: List<String> = stationList.stations!!.map { (name) -> name }
 
-        var favouriteButton = findViewById(R.id.favourite_button) as ToggleButton
-        favouriteButton.setOnCheckedChangeListener(FavouriteToggleListener())
+        SearchView().stations(stationNames).setContentView(this)
+        info("Entered search view")
 
-        var originSpinner = findViewById(R.id.originSelector)!! as Spinner
-        var destinationSpinner = findViewById(R.id.destinationSelector)!! as Spinner
-        setupSpinner(originSpinner, stationNames)
-        setupSpinner(destinationSpinner, stationNames)
+        val origin = intent.getStringExtra("origin")
+        val destination = intent.getStringExtra("destination")
 
-        var searchButton = findViewById(R.id.search_button)!! as Button
-        searchButton.setOnClickListener(SearchClickListener())
-
-        var swapButton = findViewById(R.id.swap_button)!! as ImageView
-        swapButton.setOnClickListener {
-            var origin = originSpinner.selectedItem.toString()
-            var destination = destinationSpinner.selectedItem.toString()
-
-            destinationSpinner.setSelection(getIndex(destinationSpinner, origin))
-            originSpinner.setSelection(getIndex(originSpinner, destination))
-        }
+        var originSpinner = findViewById(com.licensem.nitraintracker.R.id.originSelector)!! as Spinner
+        var destinationSpinner = findViewById(com.licensem.nitraintracker.R.id.destinationSelector)!! as Spinner
 
         if(origin != null && destination != null && origin != "" && destination != "") {
-            System.setProperty("clearResults", "false")
             originSpinner.setSelection(getIndex(originSpinner, origin))
             destinationSpinner.setSelection(getIndex(destinationSpinner, destination))
 
-            // TODO: fix race condition between StationSelectorListener clearing results and searchButton.callOnClick() showing favourite results
+            var searchButton = findViewById(R.id.search_button)!! as Button
+            searchButton.callOnClick()
         }
     }
 
+    /**
+     * Returns the index of a string in the given spinner
+     * @param haystack
+     *          Spinner
+     * @param needle
+     *          text to find within the spinner
+     * @return Int
+     *          index of the text within the spinner
+     */
     private fun getIndex(haystack: Spinner, needle: String): Int {
         return (0 until haystack.count).firstOrNull { haystack.getItemAtPosition(it) == needle } ?: 0
-    }
-
-    private fun setupSpinner(spinner: Spinner, stationNames: List<String>) {
-        spinner.adapter = ArrayAdapter(this, R.layout.spinner_item, stationNames)
-        spinner.onItemSelectedListener = StationSelectorListener()
     }
 
 }
