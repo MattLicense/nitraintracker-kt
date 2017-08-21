@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     private fun getFavourites() {
         var favourites = FavouritesDatabase.getFavourites(applicationContext)
         info("User has ${favourites.count()} favourite routes")
-        MainView().favourites(favourites).setContentView(this)
+        MainView().apply{ this.favourites = favourites.toTypedArray() }.setContentView(this)
     }
 
 }

@@ -14,12 +14,8 @@ import java.util.*
 class ApiCallTask : AsyncTask<String, Void?, StationBoard?>() {
 
     override fun doInBackground(vararg stationCode: String): StationBoard? {
-        val registryMatcher = RegistryMatcher()
-        registryMatcher.bind(Date::class.java, DateFormatTransformer())
-        val serializer = Persister(registryMatcher)
-        val apiUrl: String = ApiConfig.API_URL.plus(stationCode[0]).plus(".xml")
-
-        val connection = URL(apiUrl).openConnection() as HttpURLConnection
+        val serializer = Persister(RegistryMatcher().apply { this.bind(Date::class.java, DateFormatTransformer()) })
+        val connection = URL(ApiConfig.API_URL.plus(stationCode[0]).plus(".xml")).openConnection() as HttpURLConnection
 
         return serializer.read(StationBoard::class.java, connection.inputStream)
     }

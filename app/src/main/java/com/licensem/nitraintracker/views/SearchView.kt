@@ -10,12 +10,18 @@ import com.licensem.nitraintracker.SearchActivity
 import com.licensem.nitraintracker.listeners.FavouriteToggleListener
 import com.licensem.nitraintracker.listeners.SearchClickListener
 import com.licensem.nitraintracker.listeners.StationSelectorListener
+import com.licensem.nitraintracker.model.json.StationList
 import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk25.coroutines.onClick
 
 class SearchView : AnkoComponent<SearchActivity> {
 
-    private var stationNames: Array<String> = arrayOf()
+    var stationNames: Array<String> = arrayOf()
+
+    fun setStationNames(stationList: StationList) : SearchView {
+        this.stationNames = stationList.stations.map { (name) -> name }.toTypedArray()
+        return this
+    }
 
     override fun createView(ui: AnkoContext<SearchActivity>) = with(ui) {
         verticalLayout {
@@ -131,16 +137,6 @@ class SearchView : AnkoComponent<SearchActivity> {
             }
         }
 
-    }
-
-    fun stations(stations: List<String>) : SearchView {
-        this.stationNames = stations.toTypedArray()
-        return this
-    }
-
-    fun stations(stations: Array<String>) : SearchView {
-        this.stationNames = stations
-        return this
     }
 
 }

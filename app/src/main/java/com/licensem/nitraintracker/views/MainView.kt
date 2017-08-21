@@ -11,7 +11,7 @@ import org.jetbrains.anko.sdk25.coroutines.onClick
 
 class MainView : AnkoComponent<MainActivity> {
 
-    private var favourites: Array<FavouriteTrip> = arrayOf()
+    var favourites: Array<FavouriteTrip> = arrayOf()
 
     override fun createView(ui: AnkoContext<MainActivity>) = with(ui) {
         verticalLayout {
@@ -87,16 +87,6 @@ class MainView : AnkoComponent<MainActivity> {
                 }
             }
         }
-    }
-
-    fun favourites(favourites: Array<FavouriteTrip>) : MainView {
-        this.favourites = favourites
-        return this
-    }
-
-    fun favourites(favourites: List<FavouriteTrip>) : MainView {
-        this.favourites = favourites.toTypedArray()
-        return this
     }
 
 }

@@ -4,14 +4,14 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import org.jetbrains.anko.db.*
 
-class DbOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "nitraintracker", null, 1) {
+class DbOpenHelper(context: Context) : ManagedSQLiteOpenHelper(context, "nitraintracker", null, 1) {
     companion object {
         private var instance: DbOpenHelper? = null
 
         @Synchronized
-        fun getInstance(ctx: Context): DbOpenHelper {
+        fun getInstance(context: Context): DbOpenHelper {
             if (instance == null) {
-                instance = DbOpenHelper(ctx.getApplicationContext())
+                instance = DbOpenHelper(context.applicationContext)
             }
             return instance!!
         }

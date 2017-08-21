@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="originSelector" type="id">111</item>
-    <item name="destinationSelector" type="id">112</item>
-    <item name="swap_button" type="id">113</item>
-    <item name="result_view" type="id">114</item>
-    <item name="calling_point" type="id">115</item>
-    <item name="scheduled_time" type="id">116</item>
-    <item name="estimated_time" type="id">117</item>
-    <item name="favourite_button" type="id">118</item>
-    <item name="favourite_origin" type="id">119</item>
-    <item name="favourite_right_arrow" type="id">120</item>
-    <item name="favourite_dest" type="id">121</item>
+    <item name="originSelector" type="id"/>
+    <item name="destinationSelector" type="id"/>
+    <item name="swap_button" type="id"/>
+    <item name="result_view" type="id"/>
+    <item name="calling_point" type="id"/>
+    <item name="scheduled_time" type="id"/>
+    <item name="estimated_time" type="id"/>
+    <item name="favourite_button" type="id"/>
+    <item name="favourite_origin" type="id"/>
+    <item name="favourite_right_arrow" type="id"/>
+    <item name="favourite_dest" type="id"/>
 </resources>

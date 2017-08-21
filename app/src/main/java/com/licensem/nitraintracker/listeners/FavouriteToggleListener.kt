@@ -17,7 +17,7 @@ class FavouriteToggleListener : CompoundButton.OnCheckedChangeListener {
         var destinationSpinner = parentView.findViewById<Spinner>(R.id.destinationSelector)
 
         val favourite = FavouriteTrip(originSpinner.selectedItem.toString(), destinationSpinner.selectedItem.toString())
-        val favouriteExists = FavouritesDatabase.exists(parentView?.context, favourite)
+        val favouriteExists: Boolean = FavouritesDatabase.exists(parentView?.context, favourite)
 
         if(isChecked && !favouriteExists) {
             addToFavourites(favourite, parentView?.context)

@@ -75,11 +75,11 @@ class SearchClickListener : View.OnClickListener, AnkoLogger {
             }
             resultsView.tag = originName + "-" + destName
 
-            if(services.isEmpty()) {
-                view?.context.toast("No direct services found from $originName to $destName")
+            view?.context.toast(if(services.isEmpty()) {
+                "No direct services found from $originName to $destName"
             } else {
-                info("Found ${services.size} services from $originName to $destName")
-            }
+                "Found ${services.size} services from $originName to $destName"
+            })
         }
     }
 

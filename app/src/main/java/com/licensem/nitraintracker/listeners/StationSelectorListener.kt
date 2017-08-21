@@ -16,6 +16,7 @@ class StationSelectorListener: AdapterView.OnItemSelectedListener, AnkoLogger {
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         val parentView = parent?.parent as View
+
         var resultsView: ListView = parentView.findViewById<ListView>(R.id.result_view)
 
         val originSpinner = parentView?.findViewById<Spinner>(R.id.originSelector)
@@ -29,14 +30,14 @@ class StationSelectorListener: AdapterView.OnItemSelectedListener, AnkoLogger {
             resultsView.adapter = ArrayAdapter<Service>(parentView.context, android.R.layout.list_content, emptyArray())
         }
 
-        var searchButton = parentView?.findViewById<Button>(R.id.search_button)
         if (origin != "" && dest != "" && origin != dest) {
-            searchButton?.isEnabled = true
+            parentView?.findViewById<Button>(R.id.search_button).apply { this.isEnabled = true }
         }
 
         // make sure the favourites button is highlighted if this is a favourite
-        var favouritesButton = parentView?.findViewById<ToggleButton>(R.id.favourite_button)
-        favouritesButton.isChecked = FavouritesDatabase.exists(parent?.context, FavouriteTrip(origin,dest))
+        parentView?.findViewById<ToggleButton>(R.id.favourite_button).apply {
+            this.isChecked = FavouritesDatabase.exists(parent?.context, FavouriteTrip(origin,dest))
+        }
     }
 
 }

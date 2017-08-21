@@ -13,7 +13,6 @@ import com.licensem.nitraintracker.R
 import com.licensem.nitraintracker.model.xml.Service
 import android.view.WindowManager
 import com.licensem.nitraintracker.model.xml.CallingPoint
-import com.licensem.nitraintracker.model.xml.Destination
 import com.licensem.nitraintracker.util.AnkoAdapter
 import org.jetbrains.anko.*
 
@@ -21,18 +20,17 @@ class ServiceClickListener(private val service: Service, val origin: String, val
     : View.OnClickListener {
 
     override fun onClick(view: View?) {
-        val layoutInflater: LayoutInflater = LayoutInflater.from(view?.context)
-        val popupLayout: LinearLayout = layoutInflater.inflate(R.layout.service_popup, null) as LinearLayout
+        val popupLayout: LinearLayout = LayoutInflater.from(view?.context).inflate(R.layout.service_popup, null) as LinearLayout
 
         var callingPoints: ListView = popupLayout.findViewById<ListView>(R.id.calling_points_list)
-        var serviceDestination: Destination = service.destination!!
         var originCallingPoint = CallingPoint(origin, service.departTime!!.time!!, service.getEstimatedTime()!!)
-        var destCallingPoint = CallingPoint(serviceDestination.name!!, serviceDestination.scheduledArrival!!, serviceDestination.estimatedArrival!!)
+
+        var destCallingPoint = CallingPoint.createFromDestination(service.destination!!)
 
         var fullCallingPoints: List<CallingPoint> = listOf(originCallingPoint).plus(service.callingPoints).plus(destCallingPoint)
 
         callingPoints.adapter = AnkoAdapter({ fullCallingPoints }) {
-            index, callingPoints, view ->
+            index, callingPoints, _ ->
             var callingPoint = callingPoints[index]!!
 
             relativeLayout {
@@ -50,7 +48,7 @@ class ServiceClickListener(private val service: Service, val origin: String, val
                     centerVertically()
                     setPadding(dip(10), dip(0), dip(10), dip(0))
                 }
-                textView(callingPoint.scheduledDeparture) {
+                textView(callingPoint.getScheduledTime()) {
                     id = R.id.scheduled_time
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, 11F)
                 }.lparams {
@@ -68,7 +66,7 @@ class ServiceClickListener(private val service: Service, val origin: String, val
                         text = "On Time"
                         textColor = Color.BLACK
                     } else {
-                        text = "Estimated: " + callingPoint.estimatedDeparture
+                        text = "Estimated: " + callingPoint.getEstimatedTime()
                         textColor = Color.RED
                     }
                     setTextSize(TypedValue.COMPLEX_UNIT_DIP, 11F)
@@ -90,11 +88,11 @@ class ServiceClickListener(private val service: Service, val origin: String, val
 
         // dim the background while the service pop up is active
         val container = servicePopup.contentView.parent as View
-        val wm = view?.context?.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val p = container.layoutParams as WindowManager.LayoutParams
-        p.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND
-        p.dimAmount = 0.6f
-        wm.updateViewLayout(container, p)
+        val p = (container.layoutParams as WindowManager.LayoutParams).apply {
+            this.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND
+            this.dimAmount = 0.6f
+        }
+        (view?.context?.getSystemService(Context.WINDOW_SERVICE) as WindowManager).updateViewLayout(container, p)
 
     }
 

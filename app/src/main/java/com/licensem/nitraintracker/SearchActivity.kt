@@ -16,9 +16,7 @@ class SearchActivity : AppCompatActivity(), AnkoLogger {
         super.onCreate(savedInstanceState)
 
         var stationList: StationList = StationListTask().execute().get()!!
-        var stationNames: List<String> = stationList.stations!!.map { (name) -> name }
-
-        SearchView().stations(stationNames).setContentView(this)
+        SearchView().setStationNames(stationList).setContentView(this)
         info("Entered search view")
 
         val origin = intent.getStringExtra("origin")
@@ -45,8 +43,7 @@ class SearchActivity : AppCompatActivity(), AnkoLogger {
      * @return Int
      *          index of the text within the spinner
      */
-    private fun getIndex(haystack: Spinner, needle: String): Int {
-        return (0 until haystack.count).firstOrNull { haystack.getItemAtPosition(it) == needle } ?: 0
-    }
+    private fun getIndex(haystack: Spinner, needle: String) =
+            (0 until haystack.count).firstOrNull { haystack.getItemAtPosition(it) == needle } ?: 0
 
 }
