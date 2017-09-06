@@ -13,16 +13,16 @@ class FavouriteToggleListener : CompoundButton.OnCheckedChangeListener {
 
     override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
         val parentView = buttonView?.parent?.parent as View
-        var originSpinner = parentView.findViewById<Spinner>(R.id.originSelector)
-        var destinationSpinner = parentView.findViewById<Spinner>(R.id.destinationSelector)
+        val originSpinner = parentView.findViewById<Spinner>(R.id.originSelector)
+        val destinationSpinner = parentView.findViewById<Spinner>(R.id.destinationSelector)
 
         val favourite = FavouriteTrip(originSpinner.selectedItem.toString(), destinationSpinner.selectedItem.toString())
-        val favouriteExists: Boolean = FavouritesDatabase.exists(parentView?.context, favourite)
+        val favouriteExists: Boolean = FavouritesDatabase.exists(parentView.context, favourite)
 
         if(isChecked && !favouriteExists) {
-            addToFavourites(favourite, parentView?.context)
+            addToFavourites(favourite, parentView.context)
         } else if(!isChecked && favouriteExists) {
-            removeFromFavourites(favourite, parentView?.context)
+            removeFromFavourites(favourite, parentView.context)
         }
     }
 

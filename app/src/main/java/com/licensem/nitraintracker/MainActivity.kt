@@ -1,9 +1,11 @@
 package com.licensem.nitraintracker
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import com.licensem.nitraintracker.views.MainView
-import org.jetbrains.anko.*
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.info
+import org.jetbrains.anko.setContentView
 
 class MainActivity : AppCompatActivity(), AnkoLogger {
 
@@ -18,7 +20,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     }
 
     private fun getFavourites() {
-        var favourites = FavouritesDatabase.getFavourites(applicationContext)
+        val favourites = FavouritesDatabase.getFavourites(applicationContext)
         info("User has ${favourites.count()} favourite routes")
         MainView().apply{ this.favourites = favourites.toTypedArray() }.setContentView(this)
     }

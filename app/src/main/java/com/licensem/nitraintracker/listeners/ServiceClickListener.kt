@@ -6,13 +6,13 @@ import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.view.WindowManager
 import android.widget.LinearLayout
 import android.widget.ListView
 import android.widget.PopupWindow
 import com.licensem.nitraintracker.R
-import com.licensem.nitraintracker.model.xml.Service
-import android.view.WindowManager
 import com.licensem.nitraintracker.model.xml.CallingPoint
+import com.licensem.nitraintracker.model.xml.Service
 import com.licensem.nitraintracker.util.AnkoAdapter
 import org.jetbrains.anko.*
 
@@ -22,68 +22,74 @@ class ServiceClickListener(private val service: Service, val origin: String, val
     override fun onClick(view: View?) {
         val popupLayout: LinearLayout = LayoutInflater.from(view?.context).inflate(R.layout.service_popup, null) as LinearLayout
 
-        var callingPoints: ListView = popupLayout.findViewById<ListView>(R.id.calling_points_list)
-        var originCallingPoint = CallingPoint(origin, service.departTime!!.time!!, service.getEstimatedTime()!!)
+        val callingPoints: ListView = popupLayout.findViewById(R.id.calling_points_list)
+        val originCallingPoint = CallingPoint(origin, service.departTime!!.time, service.getEstimatedTime()!!.replace(":", ""))
 
-        var destCallingPoint = CallingPoint.createFromDestination(service.destination!!)
+        val destCallingPoint = CallingPoint.createFromDestination(service.destination!!)
 
-        var fullCallingPoints: List<CallingPoint> = listOf(originCallingPoint).plus(service.callingPoints).plus(destCallingPoint)
+        val fullCallingPoints: List<CallingPoint> = listOf(originCallingPoint).plus(service.callingPoints).plus(destCallingPoint)
 
-        callingPoints.adapter = AnkoAdapter({ fullCallingPoints }) {
-            index, callingPoints, _ ->
-            var callingPoint = callingPoints[index]!!
+        var destIdx = fullCallingPoints.size
 
-            relativeLayout {
-                fitsSystemWindows = true
-                if(callingPoint.name == destination) {
-                    backgroundColor = Color.LTGRAY
-                }
-                textView(callingPoint.name).lparams {
-                    id = R.id.calling_point
-                }.lparams {
-                    width = wrapContent
-                    height = dip(32)
-                    gravity = Gravity.CENTER_VERTICAL
-                    alignParentLeft()
-                    centerVertically()
-                    setPadding(dip(10), dip(0), dip(10), dip(0))
-                }
-                textView(callingPoint.getScheduledTime()) {
-                    id = R.id.scheduled_time
-                    setTextSize(TypedValue.COMPLEX_UNIT_DIP, 11F)
-                }.lparams {
-                    rightOf(R.id.calling_point)
-                    alignParentRight()
-                    setPadding(dip(10), dip(0), dip(10), dip(0))
-                    gravity = Gravity.RIGHT
-                    textAlignment = Gravity.RIGHT
-                    width = wrapContent
-                    height = dip(16)
-                }
-                textView {
-                    id = R.id.estimated_time
-                    if(callingPoint.scheduledDeparture == callingPoint.estimatedDeparture) {
-                        text = "On Time"
-                        textColor = Color.BLACK
-                    } else {
-                        text = "Estimated: " + callingPoint.getEstimatedTime()
-                        textColor = Color.RED
+        callingPoints.adapter = AnkoAdapter({ fullCallingPoints }) { index, _, _ ->
+            val callingPoint = fullCallingPoints[index]
+
+            if(destIdx >= index) {
+                relativeLayout {
+                    fitsSystemWindows = true
+                    if (callingPoint.name == destination) {
+                        backgroundColor = Color.LTGRAY
+                        destIdx = index
                     }
-                    setTextSize(TypedValue.COMPLEX_UNIT_DIP, 11F)
-                }.lparams {
-                    rightOf(R.id.calling_point)
-                    below(R.id.scheduled_time)
-                    alignParentRight()
-                    gravity = Gravity.RIGHT
-                    textAlignment = Gravity.RIGHT
-                    setPadding(dip(10), dip(0), dip(10), dip(0))
-                    width = wrapContent
-                    height = dip(16)
+                    textView(callingPoint.name).lparams {
+                        id = R.id.calling_point
+                    }.lparams {
+                        width = wrapContent
+                        height = dip(32)
+                        gravity = Gravity.CENTER_VERTICAL
+                        alignParentLeft()
+                        centerVertically()
+                        setPadding(dip(10), dip(0), dip(10), dip(0))
+                    }
+                    textView(callingPoint.getScheduledTime()) {
+                        id = R.id.scheduled_time
+                        setTextSize(TypedValue.COMPLEX_UNIT_DIP, 11F)
+                    }.lparams {
+                        rightOf(R.id.calling_point)
+                        alignParentRight()
+                        setPadding(dip(10), dip(0), dip(10), dip(0))
+                        gravity = Gravity.END
+                        textAlignment = Gravity.END
+                        width = wrapContent
+                        height = dip(16)
+                    }
+                    textView {
+                        id = R.id.estimated_time
+                        if (callingPoint.scheduledDeparture == callingPoint.estimatedDeparture) {
+                            text = "On Time"
+                            textColor = Color.BLACK
+                        } else {
+                            text = "Estimated: ${callingPoint.getEstimatedTime()}"
+                            textColor = Color.RED
+                        }
+                        setTextSize(TypedValue.COMPLEX_UNIT_DIP, 11F)
+                    }.lparams {
+                        rightOf(R.id.calling_point)
+                        below(R.id.scheduled_time)
+                        alignParentRight()
+                        gravity = Gravity.END
+                        textAlignment = Gravity.END
+                        setPadding(dip(10), dip(0), dip(10), dip(0))
+                        width = wrapContent
+                        height = dip(16)
+                    }
                 }
+            } else {
+                relativeLayout {  }
             }
         }
 
-        var servicePopup = PopupWindow(popupLayout, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT,true)
+        val servicePopup = PopupWindow(popupLayout, LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, true)
         servicePopup.showAtLocation(view, Gravity.CENTER, 0, 0)
 
         // dim the background while the service pop up is active

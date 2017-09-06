@@ -6,18 +6,17 @@ import java.util.*
 
 @Root(name = "Service", strict = false)
 data class Service(
-        @get:Path("ServiceType/@Type") @set:Path("ServiceType/@Type") var serviceType: String? = null,
+        @get:Attribute(name = "Type") @get:Path("ServiceType") @set:Attribute(name = "Type") @set:Path("ServiceType") var serviceType: String? = null,
         @get:Element(name = "DepartTime") @set:Element(name = "DepartTime") var departTime: DepartTime? = null,
-        @get:Element(name = "Delay") @set:Element(name = "Delay") var delay: Delay? = null,
-        @get:Element(name = "Origin1") @set:Element(name = "Origin1") var origin: Origin? = null,
+        @get:Attribute(name="Minutes") @get:Path("Delay") @set:Attribute(name="Minutes") @set:Path("Delay") var delay: Int = 0,
         @get:Element(name = "Destination1") @set:Element(name = "Destination1") var destination: Destination? = null,
-        @get:Element(name = "Platform") @set:Element(name = "Platform") var platform: Platform? = null,
+        @get:Attribute(name = "Number") @get:Path("Platform") @set:Attribute(name = "Number") @set:Path("Platform") var platform: Int? = null,
         @get:ElementList(name = "Dest1CallingPoints", type = CallingPoint::class, required = false) @set:ElementList(name = "Dest1CallingPoints", type = CallingPoint::class, required = false) var callingPoints: List<CallingPoint> = ArrayList()
 ) {
     fun getEstimatedTime(): String? {
-        var calendar = Calendar.getInstance()
+        val calendar = Calendar.getInstance()
         calendar.time = departTime!!.asDate()
-        calendar.add(Calendar.MINUTE, Integer.parseInt(delay!!.delayMinutes?: 0.toString()))
-        return SimpleDateFormat("HHmm").format(calendar.time)
+        calendar.add(Calendar.MINUTE, delay)
+        return SimpleDateFormat("HH:mm", Locale.ENGLISH).format(calendar.time)
     }
 }

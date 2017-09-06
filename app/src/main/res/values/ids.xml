@@ -11,4 +11,9 @@
     <item name="favourite_origin" type="id"/>
     <item name="favourite_right_arrow" type="id"/>
     <item name="favourite_dest" type="id"/>
+    <item name="search_view" type="id"/>
+    <item name="service_result" type="id"/>
+    <item name="service_title" type="id"/>
+    <item name="service_detail" type="id"/>
+    <item name="favourites_list" type="id"/>
 </resources>

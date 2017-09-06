@@ -6,7 +6,7 @@ android {
     buildToolsVersion "26.0.1"
     defaultConfig {
         applicationId "com.licensem.nitraintracker"
-        minSdkVersion 17
+        minSdkVersion 24
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -83,9 +83,14 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-intents:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    androidTestCompile "org.mockito:mockito-all:$mockito_version"
 
 }
 repositories {
     mavenCentral()
+}
+
+kotlin {
+    experimental {
+        coroutines "enable"
+    }
 }

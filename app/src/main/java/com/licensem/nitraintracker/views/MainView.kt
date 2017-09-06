@@ -3,6 +3,7 @@ package com.licensem.nitraintracker.views
 import android.util.TypedValue
 import android.view.Gravity
 import com.licensem.nitraintracker.MainActivity
+import com.licensem.nitraintracker.R
 import com.licensem.nitraintracker.SearchActivity
 import com.licensem.nitraintracker.model.FavouriteTrip
 import com.licensem.nitraintracker.util.AnkoAdapter
@@ -18,6 +19,7 @@ class MainView : AnkoComponent<MainActivity> {
             padding = dip(2)
 
             button("Search Train Times") {
+                id = R.id.search_button
                 onClick { startActivity<SearchActivity>() }
                 width = dip(332)
             }.lparams {
@@ -39,9 +41,11 @@ class MainView : AnkoComponent<MainActivity> {
                 }
             } else {
                 listView {
-                    adapter = AnkoAdapter<FavouriteTrip>({ favourites.asList() }) {
-                        index, favourites , view ->
-                        val favourite = favourites!![index]
+                    id = R.id.favourites_list
+                    val favouritesList = favourites.asList()
+                    adapter = AnkoAdapter({ favouritesList }) {
+                        index, _, _ ->
+                        val favourite = favouritesList[index]
 
                         relativeLayout {
                             textView(favourite.origin) {

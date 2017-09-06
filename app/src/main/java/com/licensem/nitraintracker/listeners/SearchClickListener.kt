@@ -19,35 +19,37 @@ class SearchClickListener : View.OnClickListener, AnkoLogger {
     override fun onClick(view: View?) {
         val parentView: View = view?.parent as View
         
-        val originSpinner: Spinner = parentView.findViewById<Spinner>(R.id.originSelector)
-        val destinationSpinner: Spinner = parentView.findViewById<Spinner>(R.id.destinationSelector)
+        val originSpinner: Spinner = parentView.findViewById(R.id.originSelector)
+        val destinationSpinner: Spinner = parentView.findViewById(R.id.destinationSelector)
 
-        var originName: String = originSpinner?.selectedItem.toString()
-        var destName: String = destinationSpinner?.selectedItem.toString()
+        val originName: String = originSpinner.selectedItem.toString()
+        val destName: String = destinationSpinner.selectedItem.toString()
 
         if(originName == destName) {
-            view?.context.toast("Please make sure the origin and destination are different")
+            view.context.toast("Please make sure the origin and destination are different")
         } else {
-            var origin: Station = StationListTask().execute().get()!!.getStationByName(originName)!!
+            val origin: Station = StationListTask().execute().get()!!.getStationByName(originName)!!
 
-            var originBoard: StationBoard = ApiCallTask().execute(origin.code).get()!!
-            var services: List<Service> = originBoard.findTrainsTo(destName)
+            val originBoard: StationBoard = ApiCallTask().execute(origin.code).get()!!
+            val services: List<Service> = originBoard.findTrainsTo(destName)
 
-            var resultsView: ListView = parentView.findViewById<ListView>(R.id.result_view)
+            val resultsView = parentView.findViewById<ListView>(R.id.result_view)
 
             resultsView.adapter = AnkoAdapter({ services }) {
-                index, services, view ->
-                    var service = services[index]!!
+                index, _, _ ->
+                    val service = services[index]
                     val isCallingPoint: Boolean = service.callingPoints.any { (name) -> name == destName }
 
-                    var arrivalTime = if(isCallingPoint) {
+                    val arrivalTime = if(isCallingPoint) {
                         service.callingPoints.first { (name) -> name == destName }.getEstimatedTime()
                     } else {
                         service.destination!!.getEstimatedTime()
                     }
 
                     relativeLayout {
+                        id = R.id.service_result
                         textView("Service to: ".plus(service.destination!!.name)) {
+                            id = R.id.service_title
                             setTextSize(TypedValue.COMPLEX_UNIT_SP, 16F)
                         }.lparams {
                             height = dip(32)
@@ -57,11 +59,12 @@ class SearchClickListener : View.OnClickListener, AnkoLogger {
                             bottomMargin = dip(16)
                             setPadding(dip(3), dip(0), dip(3), dip(0))
                         }
-                        textView("Leaving from platform ".plus(service.platform!!.platform)
+                        textView("Leaving from platform ".plus(service.platform)
                                 .plus(" at ")
-                                .plus(service.departTime!!.getFormattedTime())
+                                .plus(service.getEstimatedTime())
                                 .plus(", arriving at ")
                                 .plus(arrivalTime)) {
+                            id = R.id.service_detail
                             setTextSize(TypedValue.COMPLEX_UNIT_SP, 12F)
                         }.lparams {
                             height = dip(24)
@@ -73,9 +76,9 @@ class SearchClickListener : View.OnClickListener, AnkoLogger {
                         setOnClickListener(ServiceClickListener(service, originName, destName))
                     }
             }
-            resultsView.tag = originName + "-" + destName
+            resultsView.tag = "$originName-$destName"
 
-            view?.context.toast(if(services.isEmpty()) {
+            view.context.toast(if(services.isEmpty()) {
                 "No direct services found from $originName to $destName"
             } else {
                 "Found ${services.size} services from $originName to $destName"

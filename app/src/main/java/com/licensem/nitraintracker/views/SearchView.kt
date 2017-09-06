@@ -25,6 +25,7 @@ class SearchView : AnkoComponent<SearchActivity> {
 
     override fun createView(ui: AnkoContext<SearchActivity>) = with(ui) {
         verticalLayout {
+            id = R.id.search_view
             toolbar {
                 backgroundColor = ContextCompat.getColor(context, com.licensem.nitraintracker.R.color.colorPrimaryDark)
                 textView("NI Train Tracker") {
@@ -32,7 +33,7 @@ class SearchView : AnkoComponent<SearchActivity> {
                     setTextSize(TypedValue.COMPLEX_UNIT_PT, 11F)
                 }.lparams {
                     width = wrapContent
-                    gravity = Gravity.LEFT
+                    gravity = Gravity.START
                 }
 
                 themedToggleButton {
@@ -45,7 +46,7 @@ class SearchView : AnkoComponent<SearchActivity> {
                     width = dip(28)
                     height = dip(28)
                     rightMargin = dip(10)
-                    gravity = Gravity.RIGHT
+                    gravity = Gravity.END
                 }
             }.lparams{
                 width = matchParent
@@ -88,14 +89,14 @@ class SearchView : AnkoComponent<SearchActivity> {
                 id = com.licensem.nitraintracker.R.id.swap_button
                 imageResource = com.licensem.nitraintracker.R.drawable.swap_arrows
                 onClick {
-                    var originIdx = originSpinner!!.selectedItemPosition
-                    var destinationIdx = destinationSpinner!!.selectedItemPosition
+                    val originIdx = originSpinner!!.selectedItemPosition
+                    val destinationIdx = destinationSpinner!!.selectedItemPosition
 
                     destinationSpinner!!.setSelection(originIdx)
                     originSpinner!!.setSelection(destinationIdx)
                 }
             }.lparams {
-                gravity = Gravity.RIGHT
+                gravity = Gravity.END
                 topMargin = dip(-32)
                 height = dip(32)
                 leftMargin = dip(3)

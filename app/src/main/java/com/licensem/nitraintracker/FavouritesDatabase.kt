@@ -2,9 +2,15 @@ package com.licensem.nitraintracker
 
 import android.content.Context
 import com.licensem.nitraintracker.model.FavouriteTrip
-import org.jetbrains.anko.db.*
+import org.jetbrains.anko.db.insertOrThrow
+import org.jetbrains.anko.db.parseList
+import org.jetbrains.anko.db.rowParser
+import org.jetbrains.anko.db.select
 
 object FavouritesDatabase {
+
+    private val TO_FAVOURITES_LIST
+            = rowParser { origin: String, destination: String -> FavouriteTrip(origin, destination) }
 
     private val Context.database: DbOpenHelper
         get() = DbOpenHelper.getInstance(applicationContext)
@@ -12,11 +18,7 @@ object FavouritesDatabase {
     @Synchronized
     fun getFavourites(context: Context) : List<FavouriteTrip> {
         return context.database.use {
-            select("favourites").exec {
-                parseList(rowParser {
-                    origin: String, destination: String -> FavouriteTrip(origin, destination)
-                })
-            }
+            select("favourites").distinct().exec { parseList(TO_FAVOURITES_LIST) }
         }
     }
 

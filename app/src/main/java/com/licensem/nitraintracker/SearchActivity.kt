@@ -1,8 +1,9 @@
 package com.licensem.nitraintracker
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.*
+import android.support.v7.app.AppCompatActivity
+import android.widget.Button
+import android.widget.Spinner
 import com.licensem.nitraintracker.model.json.StationList
 import com.licensem.nitraintracker.tasks.StationListTask
 import com.licensem.nitraintracker.views.SearchView
@@ -15,21 +16,21 @@ class SearchActivity : AppCompatActivity(), AnkoLogger {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        var stationList: StationList = StationListTask().execute().get()!!
+        val stationList: StationList = StationListTask().execute().get()!!
         SearchView().setStationNames(stationList).setContentView(this)
         info("Entered search view")
 
         val origin = intent.getStringExtra("origin")
         val destination = intent.getStringExtra("destination")
 
-        var originSpinner = findViewById(com.licensem.nitraintracker.R.id.originSelector)!! as Spinner
-        var destinationSpinner = findViewById(com.licensem.nitraintracker.R.id.destinationSelector)!! as Spinner
+        val originSpinner = findViewById(com.licensem.nitraintracker.R.id.originSelector)!! as Spinner
+        val destinationSpinner = findViewById(com.licensem.nitraintracker.R.id.destinationSelector)!! as Spinner
 
         if(origin != null && destination != null && origin != "" && destination != "") {
             originSpinner.setSelection(getIndex(originSpinner, origin))
             destinationSpinner.setSelection(getIndex(destinationSpinner, destination))
 
-            var searchButton = findViewById(R.id.search_button)!! as Button
+            val searchButton = findViewById(R.id.search_button)!! as Button
             searchButton.callOnClick()
         }
     }

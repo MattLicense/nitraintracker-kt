@@ -1,5 +1,6 @@
 package com.licensem.nitraintracker.model.xml
 
+import com.licensem.nitraintracker.util.DateFormatTransformer
 import org.simpleframework.xml.Attribute
 import org.simpleframework.xml.Root
 
@@ -11,15 +12,15 @@ data class CallingPoint(
 ) {
     companion object {
         fun createFromDestination(destination: Destination) : CallingPoint {
-            return CallingPoint(destination.name!!, destination.scheduledArrival!!, destination.estimatedArrival!!)
+            return CallingPoint(destination.name, destination.scheduledArrival, destination.estimatedArrival)
         }
     }
 
     fun getScheduledTime() : String {
-        return scheduledDeparture?.substring(0..1).plus(":").plus(scheduledDeparture?.substring(2..3))
+        return DateFormatTransformer.formatTime(scheduledDeparture)
     }
 
     fun getEstimatedTime() : String {
-        return estimatedDeparture?.substring(0..1).plus(":").plus(estimatedDeparture?.substring(2..3))
+        return DateFormatTransformer.formatTime(estimatedDeparture)
     }
 }
